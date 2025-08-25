@@ -1,0 +1,16 @@
+/*-- scss:defaults --*/
+$code-block-border-left: true;
+
+/*-- scss:rules --*/
+/* Left border for cell-output (stdout, stdwrn, stderr) */
+.cell-output pre {
+  border-left: 4px solid rgba(red($code-block-bg-color), green($code-block-bg-color), blue($code-block-bg-color), 1);
+  padding: $code-block-bg-padding;
+}
+
+.cell-output-error pre {
+  border-left: 4px solid rgba(255, 0, 57, 1);
+}
+
+/* Currently warnings and messages are represented as stderr */
+/* .cell-output-stderr pre {} */

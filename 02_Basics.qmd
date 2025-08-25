@@ -1,0 +1,180 @@
+# R as a Calculator
+
+The first thing we will learn is how to use R as a calculator. You can use any of the math operators you want:
+
+- `+` Addition
+- `-` Subtraction
+- `*` Multiplication
+- `/` Division
+- `^` Exponentiation 
+
+Let's experiment with some arithmetic expressions: 
+
+```{r}
+1 + 1
+2 / 4
+3^2
+```
+
+
+Order of operations (via PEMDAS) apply here too:
+```{r}
+5 + 2 * 3
+```
+
+This does 2 * 3 first and then adds 5 to get 11. 
+If we want to do 5 + 2 first, then we can wrap it in parenthesis (the P in PEMDAS):
+
+```{r}
+(5 + 2) * 3
+``` 
+
+There are even some operators that you might not know that have to do with remainders:
+```{r}
+# Get the remainder
+13 %% 2
+
+# Divide and round down to the nearest decimal
+13 %/% 2
+```
+
+#### Exercise
+
+Compute the sample average of the following sample of baby weights (in lbs.):
+
+(7.7, 8.2, 8.3, 7.6, 9.2, 7.4, 11.1)
+
+```{r}
+
+```
+
+
+## R as a functional programming language
+
+R is based around functions. 
+A function takes an input (or multiple inputs) and produces an output. 
+There are many many functions in R, but first lets learn some calculator type functions. 
+For example, if I want to take the square root, I can use the function `sqrt`. 
+Here are some example of math functions:
+
+The form of a function call is `function_name(arguments)`
+
+1. The function name, `sqrt`, `abs`, `factorial`
+2. Opening parenthesis `(`
+3. The argument (in the future arguments)
+4. Closing parenthesis `)`
+
+For example `sqrt(16)` says to take the argument `16` and apply the function `sqrt` of it.
+
+#### Exercise
+
+1. Calculate the square root of 147
+
+```{r}
+
+```
+
+2. Try finding the natural log of 10, using `log()`
+
+```{r}
+
+```
+
+3. Practical usage: say the $Var(x) = 12$ and we have a sample size of 55. 
+What is the standard deviation of the sample distribution of the sample mean?
+
+```{r}
+
+```
+
+## Giving Things Names (i.e. Creating Variables)
+
+Variables are immensely helpful in R. 
+It lets you store values by giving them a `name` and then lets you access the variables later by name. 
+I can assign variables using either `<-` or `=`. 
+
+Create variable `x` with value 5 and a variable `y` with value 20.
+
+```{r}
+x <- 5
+y <- 20
+```
+
+What is the sum of `x` and `y`?
+
+```{r}
+x + y
+```
+
+Note the form of creating the variable:
+
+1. The variable name, `x` and `y`
+2. Assignment operator `<-` or `=`
+3. The value we want to store.
+
+The reason behind the left arrow is that the arrow points to variable name where we want to put the value into.
+
+You can create a variable containing *text* by using `""`
+
+```{r}
+instructor_name <- "Kyle Butts"
+print(instructor_name)
+```
+
+We can use the `cat` command to print out the text to the console:
+```{r}
+cat(instructor_name)
+```
+
+
+#### Exercise
+
+Use quotation marks to create a string and call it `my_name`.
+
+```{r}
+my_name <- "Kyle Butts"
+my_name
+```
+
+
+## Glueing together strings
+
+Often time we might want to combine text from multiple sources and/or add data to our strings.
+We can use the `paste`/`paste0` functions to combine together strings.
+`paste0` will append the strings as written, while `paste` will automatically add a space between each thing it is concatenating. 
+Dealer's choice for which you prefer
+
+For example,
+```{r}
+paste0("Kyle", "Butts")
+paste("Kyle", "Butts")
+```
+
+What is cool about these functions is they take any number of arguments and append them together. 
+For example, we can write a paste function that takes your height in inches and prints a human-readable string.
+
+```{r}
+height_in_inches <- 70
+paste0("My height is ", height_in_inches %/% 12, "'", height_in_inches %% 12, "\"")
+```
+
+Note that numbers get automatically converted to a string.
+One subtle point you might have missed. 
+If we start and end strings with double quotes, how can we include one in the text itself?
+Above, we did this with the escape key `\"`. 
+You probably won't need to do this, but it's worth mentioning nevertheless.
+
+#### Exercise
+
+1. Construct a string that reports on the average baby weight in your sample. 
+   It would be nice to create a variable that stores `mean_baby_weight` to make the code nicer to read.
+   These were the weights: `(7.7, 8.2, 8.3, 7.6, 9.2, 7.4, 11.1)`
+
+```{r}
+
+```
+
+2. Try printing out the following string: `\U1F919`. What is displayed?
+
+```{r}
+```

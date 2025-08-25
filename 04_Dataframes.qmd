@@ -1,0 +1,268 @@
+# Dataframes (or, a group of vectors)
+
+
+Dataframes are a special object in R. 
+A dataframe is simply a collection of **vectors** and looks like a typical excel spreadsheet.
+The columns of a dataframe are each **vectors** that contain variables and a row contains an **observation**.
+This is the coding equivalent of an excel spreadsheet. 
+If you are using Positron, clicking the dataframe in the `Variables` tab or typing `View(df_name)` into the console will let you interactively scroll though the data. 
+
+First, we will load some data.frames that come with a **package** in R.
+We can do that using the `data` function.
+Let's load the `penguins` data set which contain a census conducted on multiple species of penguins on a set of islands:
+![Three species of penguins](https://github.com/allisonhorst/palmerpenguins/raw/main/man/figures/lter_penguins.png)
+
+```{r}
+data(penguins, package = "palmerpenguins")
+```
+
+We can use the `head()` function to view the first few rows. 
+It prints out the first 6 rows of the dataset so you can see the variables. 
+BTW, this function works on vectors too!
+
+```{r}
+head(penguins)
+```
+
+Another helpful function is `str()` which prints a similar format, but is a little easier to read, especially when there are a lot of variables in the dataset. 
+
+```{r}
+str(penguins)
+```
+
+The output of string shows that a data.frame is just a list of vectors that have names (`species`, `island`, ...). 
+
+Finally, you can access the number of rows and number of columns with `nrow`/`ncol`
+
+```{r}
+print(paste0(nrow(penguins), " obs. of ", ncol(penguins), " variables"))
+```
+
+#### Exercise
+
+1. What constitutes a row in the penguins dataframe? What constitutes a column?
+
+
+## Accessing vectors by name with `$`
+
+The first thing we might want to do is access some of the vectors from the `penguins` dataframe. 
+If you type `species` into the console and hit enter, you will see this error: `Error: object 'species' not found`. 
+Get used to recognizing this error becuase you will probably accidentally make this mistake a lot at first.
+
+This errors occurs because R does not know that you mean "look for `species` in the `penguins` dataset".
+To access an individual vector, we must specify *both* the dataframe and the vector's name. 
+To do this, we use the `$` operator like this: `penguins$species`. 
+This looks into the dataframe stored in the `penguins` variable and looks for the vector named `species`:
+```{r}
+penguins$species
+```
+
+When using Positron, after you type the `$` a little pop-up menu wil show up that shows you all the available variable names.
+You can use the arrow keys to find the variable and hit enter (or tab) to have it type the variable name for you.
+
+Try that below to find the avariable measuring the depth of a penguin's bill:
+```{r}
+
+```
+
+
+## General subsetting with `[,]` 
+
+Now, let's think about subsetting the dataframe to a specific set of rows. 
+Given that we used `[idx]` for vectors (either a logical vector or integer index), you might think we can do the same with data.frames.
+This is good intuition, but remember a data frame has both rows and columns!
+We will still use `[,]` to subset, but we need a `,` to specify rows and columns.
+
+The syntax therefore is `df[ROWS, COLUMNS]`. 
+Before comma = rows and After comma = columns.
+If either `ROWS` or `COLUMNS` is left blank, then it will assume you want all rows or all colums respectively.
+
+Let me show you some examples:
+
+```{r}
+## First 5 rows, all columns
+penguins[1:5,]
+```
+
+```{r}
+## All rows, the species column
+penguins[, "species"]
+```
+
+```{r}
+## First 5 rows, the species column
+penguins[1:5, "species"]
+```
+
+```{r}
+## First 10 rows, the species and island columns
+penguins[1:10, c("species", "island")]
+```
+
+
+You can "chain" together calls and between `[,]` and `$` syntaxes.
+For example let's say I want the variable `island` for the first 6 observations:
+```{r}
+penguins[1:6, "island"]
+penguins[1:6, ]$island
+```
+
+But, if I do `penguins$island`, this results in a vector. 
+So, to get the first 6 elements, I use only `[]` without a comma:
+```{r}
+penguins$island[1:6]
+```
+
+#### Exercise
+
+1. Use the `unique()` function to find the unique values of the variable `species` in the penguins dataset.
+
+```{r}
+
+```
+
+2. Use the `table()` function to find how many penguins there are of each species.
+
+```{r}
+
+```
+
+3. Imagine we use `penguins[1:5]` to try and grab the first 5 rows. What happens?
+
+```{r}
+
+```
+
+
+
+## Selecting rows based on criteria
+
+Lets see which penguins live on Torgersen.
+
+We can use the `==` operator to compare a vector to a value (or set of values). 
+For example, here we see if each penguin's island is `"Torgersen"`. 
+It produces a `boolean` vector of TRUEs and FALSEs
+
+```{r}
+on_torgersen <- penguins$island == "Torgersen"
+on_torgersen
+```
+
+We can subset the data using a boolen vector.
+We pass this boolean vector to the `ROWS` section of `[,]`
+
+```{r}
+penguins[penguins$island == "Torgersen", ]
+penguins[penguins$island == "Torgersen", ]$body_mass_g
+```
+
+You can also use the following operators to supply multiple criteria:
+- `&` And operator. Both vector 1 **and** vector 2 must be true for the observation
+- `|` Or operator. **Either** vector 1 **or** vector 2 must be true for the observation
+
+```{r}
+penguins$island == "Torgersen" & penguins$sex == "male"
+penguins$island == "Torgersen" | penguins$sex == "male"
+```
+
+
+#### Exercise
+
+1. Subset the `penguins` dataframe to male penguins that weigh over 3500 grams
+
+```{r}
+
+```
+
+
+2. Are all three species present on the Torgersen island? The `table` or `unique` functions might be helpful here.
+
+```{r}
+
+```
+
+3. Which species has the heaviest penguin? 
+
+```{r}
+
+```
+
+4. 
+
+
+
+#### Exercise
+
+![Penguin Beak Measurements](https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/man/figures/culmen_depth.png)
+
+Lets compare Bill Length between the three species of penguins in our dataset: the Adelie, Gentoo, and Chinstrap penguins.
+
+Using `[]` and `<-`, create 3 dataframes called `penguins_ad`, `penguins_gent`, and `penguins_chin` that subset based on the correct species of penguins.
+
+"Adelie", "Gentoo", "Chinstrap"
+
+```{r}
+
+```
+
+
+What is the mean of each species bill length in millimeters? (remember there are NAs so we will need to use `na.rm = TRUE`).
+
+```{r}
+
+```
+
+
+## Creating new variables
+
+We can create *new* variables in our dataset by using the `$` or `[]` operators with `<-`.
+
+```{r}
+penguins$body_mass_g
+
+# 0.0022 lbs = 1 g
+penguins$body_mass_lb <- 0.00220462 * penguins$body_mass_g
+```
+
+
+### Exericse
+
+Your R exercise asks you to calculate the standard deviation without using the `var()` or `sd()` command. We want to remove `NA`s manually to fix this. A helpful command is `is.na()`. Let's practice computing the variance of body_mass_lb by hand. You will want to use `nrow()`
+
+```{r}
+
+```
+
+
+## Loading data into R
+
+In R, you can either load data from a website or from a computer. 
+Usually data is found in a .csv file, but sometimes it will be in different forms that R can read.
+
+```{r}
+# From a website
+fandango <- read.csv("https://raw.githubusercontent.com/kylebutts/UARK_4753/refs/heads/main/R_Labs/Lab_1/fandango_score_comparison.csv")
+head(fandango)
+```
+
+However, most common is to download the data and put it in the folder where your `.Rmd` file is. 
+To load data you will need to find the file location. 
+By default, the working directory is whereever the `.qmd` file is located. So if your dataset is in the same folder as `.qmd`, you can load it by name:
+```{r}
+#| eval: FALSE
+penguins <- read.csv("penguins.csv")
+```
+
+Or, say you have your data in a subfolder called `data`.
+Then, you would use `penguins <- read.csv("data/penguins.csv")`.
+
+If you have a dataframe that you want to export to a csv function, you will use the function `write.csv(df, "path/to/file.csv")`. 
+This uses the same working directory as `read.csv` and relative paths to the file work the same way.  
+
+
+## Sorting dataframes
+
+Two ways: 
+- `sort_by`
+- `df[order(), ]`
+

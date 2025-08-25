@@ -1,0 +1,282 @@
+# Running regressions in R 
+
+One of the most common and flexible ways to analyze data is using a linear regression model. 
+While `R` comes with the `lm` function to run regressions, I recommend the `fixest` package.
+This uses the same syntax as `lm` but has a bunch of features that make many things simpler and nicer.
+
+```{r}
+## You might need to install this. To do so, run this:
+## install.packages("fixest")
+library(fixest)
+```
+
+To begin, we will use a data set on the SAT scores of NYC public schools
+
+```{r}
+nyc <- read.csv("data/nyc_sat.csv")
+str(nyc)
+```
+
+```{r}
+## Looks like NYC :-)
+plot(latitude ~ longitude, data = nyc)
+```
+
+#### Exercise
+
+Whenever working with a new dataset, it is good to plot variables to get a sense of the data.
+In this class, a lot of data is clean already, but in the wild, you will see a lot of weirdness. 
+For example, the Census Bureau often times codes `NA` in monthly income as `9999`. 
+If you don't look at the data and instead just run regressions, your results will be really wonky from these "very high income earners". 
+
+To familiarize ourselves with this data, let's plot a few key variables. 
+
+1. First, create a histogram of `average_score_sat_math` and `average_score_sat_reading`
+
+```{r}
+
+```
+
+2. Print out `percent_white`; what's the problem here?
+
+```{r}
+
+```
+
+3. Create a scatter plot comparing SAT reading score with SAT math score.
+   Please use quality x and y labels. 
+   Additionally, use a high-quality title. 
+   Try and write a descriptive title that gives your reader a "key takeaway".
+
+```{r}
+
+```
+
+
+
+
+## First regression by hand
+
+First, let's use some code to fix the percent variables.
+I simply delete the `%` from the string and then convert to a number:
+```{r}
+nyc$percent_white <- as.numeric(gsub("%", "", nyc$percent_white))
+nyc$percent_black <- as.numeric(gsub("%", "", nyc$percent_black))
+nyc$percent_hispanic <- as.numeric(gsub("%", "", nyc$percent_hispanic))
+nyc$percent_asian <- as.numeric(gsub("%", "", nyc$percent_asian))
+nyc$percent_tested <- as.numeric(gsub("%", "", nyc$percent_tested))
+```
+
+Now, let's do our first regression by hand. 
+We want to regress average SAT reading score on average SAT math score.
+Recall the formula for the OLS coefficients $\hat{\beta}_0$ and $\hat{\beta}_1$ are given by
+
+$$
+  \hat{\beta}_1 = \text{cov}(X, Y) / \text{var}(X) \ \text { and }\hat{\beta}_0 = \bar{Y} - \bar{X} * \hat{\beta}_1 
+$$
+
+Let's grab the math and reading scores and put in variables `x` and `y` for ease of writing. 
+But first, we need to drop NAs in either `x` or `y`. 
+To do this, we will grab the two columns from `nyc` and then use the `na.omit()` function to drop any rows that contain an `NA` in any variable.
+
+```{r}
+## need to drop NAs manually
+vars <- nyc[, c("average_score_sat_math", "average_score_sat_reading")]
+vars <- na.omit(vars) 
+x <- vars$average_score_sat_math
+y <- vars$average_score_sat_reading
+
+## No NAs
+sum(is.na(x)) + sum(is.na(y))
+```
+
+Now, that `x` and `y` contain no NAs
+
+```{r}
+## Calcualate regression by hand 
+ybar <- mean(y)
+xbar <- mean(x)
+var_x <- var(x)
+cov_x_y <- cov(x, y)
+
+beta_1_hat <- cov_x_y / var_x
+beta_0_hat <- ybar - xbar * beta_1_hat
+```
+
+Let's plot our data and our estimated regression line. 
+We can plot the regression line using `abline()`. 
+`abline` is similar to `points`/`lines` in that it needs to come after a call to `plot`.
+`abline` takes two required arguments `a` for the intercept and `b` for the slope.
+
+```{r}
+plot(
+  average_score_sat_reading ~ average_score_sat_math,
+  data = nyc
+)
+abline(
+  a = beta_0_hat, b = beta_1_hat, 
+  col = "purple", lwd = 2
+)
+```
+
+### Forecasting
+
+We can use our **fitted model** to produce **fitted values**.
+For example, if we want to predict the average SAT reading score for a school with an average SAT math score of 450, we can do the following:
+```{r}
+beta_0_hat + beta_1_hat * 450
+```
+
+Or, we can do *in-sample* prediction by using our dataframe
+```{r}
+nyc$average_score_sat_reading_hat <- (beta_0_hat + beta_1_hat * nyc$average_score_sat_math)
+```
+
+These, of course, will all fall on our line of best fit:
+```{r}
+plot(
+  average_score_sat_reading ~ average_score_sat_math,
+  data = nyc
+)
+abline(
+  a = beta_0_hat, b = beta_1_hat, 
+  col = "purple", lwd = 2
+)
+points(average_score_sat_reading_hat ~ average_score_sat_math, data = nyc, col = "purple")
+```
+
+Another interesting property of regression is that $(\bar{X}, \bar{Y})$ will fall on the regression line.
+That is, the fitted value for a school with SAT math score of $\bar{X} = $ `r round(xbar, 1)` is $\bar{Y}$:
+```{r}
+ybar == beta_0_hat + beta_1_hat * xbar
+```
+
+
+
+#### Exercise
+
+1. Predict the SAT reading score for a school with an SAT math score of 600
+
+
+
+## First regression by function
+
+Now, let's compare our estimates to the ones produced by R's built-in function `lm`.
+The `lm` function operates very similarly to `plot`: it takes two arguments: the formula `y ~ x` and the `data` argument.
+I will store the results of `lm` in a variable called `est_lm` so that I can use it in later functions.
+
+```{r}
+## When lines get too long, use new lines to make reading the code easier
+est_lm <- lm(
+  average_score_sat_reading ~ average_score_sat_math,
+  data = nyc
+)
+print(est_lm)
+cat(paste0("\nbeta_0_hat = ", round(beta_0_hat, 4)))
+cat(paste0("\nbeta_1_hat = ", round(beta_1_hat, 4)))
+```
+
+If we want more information, we pass `est_lm` to `summary`:
+```{r}
+summary(est_lm)
+```
+
+As mentioned above, we will use the `fixest` package in this class. 
+The function `feols` is *equivalent* to the `lm` function in base R and takes the same formula and data arguments.
+I will store the results of `feols` in a variable called `est` so that I can use it in later functions.
+To display the results, I will use the `print` function.
+
+```{r}
+## Using fixest package
+est <- feols(
+  average_score_sat_reading ~ average_score_sat_math,
+  data = nyc
+)
+print(est)
+```
+
+### Forecasting 
+
+To forecast fitted values, we will use the `predict` function. 
+The `predict` function takes as a first argument the result of `lm` or `feols`.
+In addition, we will use the `newdata` argument to use.
+The `newdata` argument must contain the same $X$ variable(s) that we use in our regression. 
+
+```{r}
+# Predict yhat in-sample
+nyc$yhat <- predict(est, newdata = nyc)
+
+plot(
+  average_score_sat_reading ~ average_score_sat_math, data = nyc
+)
+abline(coef = coef(est), col = "orange")
+points(
+  yhat ~ average_score_sat_math, data = nyc, 
+  col = "orange"
+)
+```
+
+We can also forecast for different values by creating a new data.frame containing hypothetical values:
+```{r}
+predict_df <- data.frame(average_score_sat_math = seq(300, 750, by = 10))
+predict_df$yhat <- predict(est, newdata = predict_df)
+plot(yhat ~ average_score_sat_math, data = predict_df)
+```
+
+#### Exercise
+
+1. Run a regression of `average_score_sat_math` as the outcome variable and `percent_white` as the predictor variable using `feols`. 
+   Interpret the coefficients in worlds
+
+```{r}
+
+```
+
+**Answer:**
+
+
+2. Create a plot of the raw data as well as the fitted regression line. 
+   Make sure each axis has high-quality labels.
+
+```{r}
+
+```
+
+
+### Regression with indicator varaibles
+
+```{r}
+feols(average_score_sat_math ~ 0 + i(borough), data = nyc)
+```
+```{r}
+feols(average_score_sat_math ~ i(borough), data = nyc)
+```
+
+```{r}
+feols(average_score_sat_math ~ i(borough, ref = "Manhattan"), data = nyc)
+```
+
+
+### Interactions
+
+```{r}
+workers <- read.csv("data/cps.csv")
+str(workers)
+workers$college <- 1 - workers$nodegree
+```
+
+For interactions between two discrete variables, we need a special syntax:
+
+```{r}
+feols(re78 ~ i(black, i.college), workers)
+```
+
+For interactions between a discrete variable and a continuous variable,
+
+```{r}
+feols(re78 ~ 0 + i(black) + i(black, age), workers)
+```
+
+
+
+

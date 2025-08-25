@@ -1,0 +1,64 @@
+# Function Arguments
+
+The way R accepts arguments to functions is a bit complicated; but once you understand the rules, it makes writing code less annoying.
+In particular, when a person creates a function, they pick an ordering of the arguments. 
+
+As an example, let's look at the `mean` function.
+The help menu shoes the usage like this:
+``` r
+mean(x, trim = 0, na.rm = FALSE, ...)
+```
+
+This function has three kinds of arguments:
+1. The `x` is a **mandatory** argument that must be passed; otherwise the function will produce an error: `argument "x" is missing, with no default`
+2. The `trim` and `na.rm` arguments are **optional**. 
+   This is because they have default values `trim = 0` and `na.rm = FALSE`. 
+   With optional arguments, you can set any number of them and leave the rest to their default; 
+   For example, `mean(x, na.rm = TRUE)` works just fine and uses `trim = 0`. 
+3. The `...` is called `dots` and will be discussed later in the section.
+
+When *calling* the function, we can pass arguments to the arguments in two ways: by *position* or (2) by *name*.
+When calling `mean(rebounds, na.rm = TRUE)` we are passing rebounds to `x` by *position* and `na.rm = TRUE` by name.
+
+We could call `mean(rebounds, 0, TRUE)`, but if we tried `mean(rebounds, TRUE)` it would error (or in some cases produce results that you did not expect).
+This is because, when passing without names, the arguments get applied to the other arguments *in order*.
+Since `trim` comes before `na.rm`, R is assigning `TRUE` to `trim`. 
+
+**Takeaway:**
+
+Just because you know in the moment the order of arguments does not mean you will remember later when you're reading your code.
+I recommend writing the argument names for *all* arguments, except maybe not the first.
+The only reason why I do not think it is necessary for the first argument is that it will *usually* be the vector, data.frame, or other key object acted on. 
+
+## Advanced arguments notes
+
+Given the above takeaway, this section won't be necessary if you name your arguments!
+The way R does argument matching is as follows:
+1. First, all *named* arguments are matched. 
+2. What remains are the arguments that are not passed by name. 
+   These are assigned by position to the remaining arguments the function accepts.
+   The first unnamed argument goes to the first remaining argument in the function, and so on.
+
+The `...` is a special R syntax that `gobbles up` all other arguments passed to a function.
+So, for example, look at the `?plot` menu.
+There are only two arguments `x` and `y` that are named and then `...`.
+
+But, the following does not create any problems:
+```{r}
+v <- ecdf(rnorm(47))
+plot(v, main = "Empirical CDF of v", col.hor = "red", cex = 0.5, xlab = "Value", ylab = NA)
+```
+
+What happens here is that the `x` argument gets assigned the value `v`, `y` uses the default value because there are no unnamed arguments, and `...` collects the other arguments. 
+Why not just name the arguments?
+Two reasons:
+1. Sometimes `...` get "passed along" to another function. When this is the case, then the documentation will point to that documentation for the arguments.
+2. With `S3` methods, the `...` allows better customization. This won't make sense yet; but will hopefully if you read the section below on `S3` methods.
+
+
+#### Exercise
+
+1. What values of arguments are being assigned here? Given these three examples, which do you think is the easiest to read?
+   a. `mean(na.rm = TRUE, rebounds, 0.1)`
+   b. `mean(0.1, x = rebounds, TRUE)`
+   c. `mean(rebounds, na.rm = TRUE, trim = 0.1)`

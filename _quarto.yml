@@ -1,0 +1,43 @@
+project:
+  type: book
+
+book:
+  title: "Introductory R Workbook"
+  author: "Kyle Butts"
+  date: "8/21/2025"
+  downloads: [pdf]
+  repo-url: https://github.com/kylebutts/introductory_R_workbook/
+  repo-actions: [source]
+  chapters:
+    - index.qmd
+    - part: "Introduction"
+      chapters: 
+      - 01_Installation.qmd 
+      - 02_Basics.qmd 
+      - 03_Vectors.qmd 
+      - 04_Dataframes.qmd 
+      - 05_Plotting.qmd
+      - 06_Regression.qmd
+      - 07_Time_Series.qmd
+    
+    - part: "Intermediate"
+      chapters: 
+      - 11_Arguments.qmd 
+      # - 12_Monte_Carlo.qmd
+
+    # - part: "Advanced"
+    #   chapters: 
+    #   - 21_S3.qmd 
+    #   - 22_dplyr.qmd 
+
+format:
+  html:
+    theme:
+      - cosmo
+      - include/cell_output.scss
+    code-copy: true
+  pdf:
+    documentclass: scrreprt
+
+
+

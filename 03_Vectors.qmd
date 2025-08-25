@@ -1,0 +1,302 @@
+
+# Vectors 
+
+So far, we have dealth with scalar numbers and texts. 
+But, when working with data, we will observe many units and need a way to store all their values together.
+This is where the bread and butter of data-science comes in: Vectors.
+
+Vectors are a list of elements like integers, numbers, or strings. 
+This is really useful for storing data! 
+You use `c` to create a vector (pneumonically, `c` stands for combine).
+
+```{r}
+## Rebounds from 2023 NBA Season
+rebounds <- c(260, 114, 252, 310, 165, 236, 148, 336, 941, 127, 384, 278, 300, 6, 136, 145, 233, 142, 420, 35, 11, 161, 485, 1, 830, 81, 112, 16, 63, 513, 162, 296, 434, 239, 22, 269, 235, 222, 485, 245, 578, 162, 281, 344, 39, 99, 82, 79, 476, 3, 69, 84, 201, 52, 223, 244, 34, 728, 5, 423, 286, 346, 324, 549, 580, 152, 401, 58, 95, 187, 618, 189, 69, 184, 34, 101, 36, 7, 472, 78, 41, 631, 259, 12, 760, 33, 410, 672, 70, 227, 272, 247, 289, 63, 96, 500, 497, 739, 188, 178, 491, 1, 298, 202, 211, 307, 227, 439, 253, 24, 740, 168, 921, 61, 210, 213, 209, 150, 145, 220, 26, 144, 286, 190, 56, 182, 580, 105, 402, 660, 260, 118, 0, 231, 11, 184, 69, 432, 807, 257, 762, 24, 42, 342, 95, 185, 77, 310, 170, 447, 98, 271, 8, 41, 99, 85, 102, 593, 275, 24, 10, 206, 407, 51, 184, 0, 98, 10, 305, 43, 112, 30, 80, 312, 292, 292, 899, 182, 317, 511, 665, 78, 633, 314, 32, 11, 49, 205, 402, 296, 46, 26, 261, 429, 451, 66, 546, 206, 35, 5, 63, 161, 227, 394, 308, 118, 92, 249, 691, 257, 85, 220, 483, 233, 909, 744, 564, 208, 573, 25, 243, 16, 2, 30, 132, 34, 468, 460, 330, 268, 1, 252, 318, 453, 473, 33, 82, 494, 26, 450, 54, 110, 145, 870, 670, 111, 1, 179, 448, 700, 74, 845, 30, 27, 639, 15, 97, 705, 96, 54, 295, 312, 556, 39, 551, 426, 45, 258, 8, 233, 564, 630, 536, 5, 255, 95, 173, 11, 51, 106, 71, 393, 317, 149, 394, 301, 319, 19, 147, 257, 336, 350, 19, 416, 829, 2, 219, 1530, 171, 124, 54, 47, 296, 30, 26, 96, 168, 14, 118, 770, 310, 66, 934, 42, 415, 204, 634, 202, 301, 391, 177, 81, 256, 116, 188, 76, 417, 1, 28, 435, 191, 449, 270, 265, 5, 1, 0, 47, 183, 0, 22, 247, 0, 381, 19, 2, 862, 253, 469, 55, 37, 90, 246, 78, 88, 512, 0, 101, 265, 28, 238, 223, 257, 372, 21, 236, 94, 81, 295, 206, 704, 454, 607, 145, 129, 282, 405, 247, 1258, 15, 269, 9, 240, 260, 305, 75)
+```
+
+It is kind of a pain in the neck to write all these out; and worse, prone to errors!
+Later, we will learn how to load data from a file, making this much easier. 
+
+You can access elements of a vector by using `[#]`, where `#` is the $i$-th element you want
+
+```{r}
+rebounds[1]
+rebounds[2]
+```
+
+If you want to access more than one element, we can subset using *a vector!* (how meta):
+
+```{r}
+rebounds[c(1, 2)]
+```
+
+One special syntax is ther `a:b` which generates $a, a+1, \dots, b$.
+This makes it easy to grab the first 5 values:
+```{r}
+rebounds[1:5]
+```
+
+Standard math operators work on vectors element by element:
+
+```{r}
+rebounds[1:5] + 1
+rebounds[1:5] / 12 # dozens of rebounds
+```
+
+If we want to know how many elements are in a vector, we can use the `length` function:
+```{r}
+length(rebounds)
+```
+
+
+## Summarizing vectors
+
+The natural next step is to start trying to summarize the data. 
+There are a set of built-in functions that provide statistical summaries of the data.
+
+```{r}
+## Mean, standard deviation, and variance
+mean(rebounds)
+sd(rebounds)
+var(rebounds)
+
+## Extremes
+max(rebounds)
+min(rebounds)
+
+## chaining functions
+sqrt(var(rebounds))
+```
+
+Some functions will take extra **arguments** that give more instructions.
+For example, the `quantile` function returns information about percentiles of the distribution. 
+You can add extra arguments, separated by commas.
+For example, `quantile`'s first argument is a vector and the second argument is what percentiles you want to find.  
+
+```{r}
+## Percentiles of the data
+quantile(rebounds, c(0.1, 0.5, 0.9))
+```
+
+We will talk in more details about plotting below, but for now we can use the `hist()` function to give us a view of the distribution of the vector
+
+```{r}
+hist(rebounds)
+```
+
+### Help menu
+
+How did I know the order of arguments for `quantile`? 
+Are there ways to customize the histogram created by `hist`?
+In general, if you have a question about a function, then you need to address that function's **documentation**.
+To do so, click in to your console and type `?func_name` where `func_name` is the name of the function, e.g. `quantile`.
+At first, the information may be very overwhelming.
+The documentation in base R functions are very detailed, but are not great at introducing the functions.
+You should focus on the **Arguments** section and perhaps the **Examples** section, in my opinion. 
+In particular, the order of the arguments is probably helpful in order of importance
+
+
+#### Exercise
+
+Similar to `c`, the `seq` function creates a vector: a **seq**uence of 
+numbers. 
+
+1. Create a sequence of all multiples of four from 4 to 100. Look at ``?seq` for help.
+   Hint: The arguments you need here are `from`, `to`, and `by`.
+   Store your vector in a varaible
+
+2. Find the 19th element of this sequence
+
+3. What is the sum of the 10th and 11th element of this sequence.
+
+
+### `NA`s 
+
+In the real world, some times we will not have a value for a variable for an individual (e.g. people don't fill answer a survey question).
+In `R`, this is represented as an `NA`.
+
+```{r}
+reviews <- c(5, NA, 4, 4, 3, 5,  NA, 4, 5, 2)
+```
+
+What is the average (mean and median) review?
+```{r}
+mean(reviews)
+median(reviews)
+```
+
+By default, the statistical summary functions will all produce `NA` when they are present in the data.
+`R` wants you to *opt-in* to ignoring the missings. 
+To do this, functions will take an extra **argument** called `na.rm`:
+
+```{r}
+mean(reviews, na.rm = FALSE)
+max(reviews, na.rm = FALSE)
+```
+
+A lot of this information will be presented to you by the `summary` function.
+For numberic vectors, `summary` produces the five-number summary, the mean, and the number of `NA`s (if any)
+
+```{r}
+summary(reviews)
+```
+
+### Logical Vectors
+
+So far, we have seen two kinds of vectors: numeric and character vectors.
+A third, common, vector is a **logical** vector:
+```{r}
+ordered_takeout <- c(TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE)
+```
+
+Logical vectors can take only two values: `TRUE` and `FALSE`. 
+They can be treated as numbers by using `as.numeric()` with `TRUE` becoming `1` and `FALSE` becoming `0`.
+```{r}
+as.numeric(ordered_takeout)
+```
+
+One common trick is to use `sum()` on a logical vector and it will return the number of `TRUE`s:
+```{r}
+sum(ordered_takeout)
+```
+
+Logical vectors are often returned by other operations.
+For example, we can check whether elements of a vector equal some value with `==`.
+Other operators that produce a logical vector include `>`, `<`, `>=`, and `<=`.
+
+```{r}
+## Find five-star reviews
+reviews == 5
+
+## Find three-star or lower 
+reviews <= 3
+```
+
+Logical vectors can be **negated** using the `!` operator:
+
+```{r}
+## Find non five-star reviews
+!(reviews == 5)
+```
+
+You can also use the following operators to supply multiple criteria:
+
+- `&` And operator. Both vector 1 **and** vector 2 must be true for the observation
+- `|` Or operator. **Either** vector 1 **or** vector 2 must be true for the observation
+
+```{r}
+(reviews == 5) & (reviews == 4)
+```
+
+```{r}
+(reviews == 5) | (reviews == 4)
+
+## Equivalent to 
+reviews >= 4
+```
+
+
+### Subsetting of vectors by logical
+
+We have already discussed one way of subsetting vectors via a vector of integers.
+This is called "subsetting by index".
+
+The other common way is by using a logical vector the same length of the vector you wish to subset.
+For example, let's look at the reviews for takeout orders and dine-in orders separately
+
+```{r}
+## Takeout orders
+reviews[ordered_takeout]
+
+## Dine-in orders
+reviews[!ordered_takeout]
+```
+
+#### Exercise
+
+1. What is the average review for take-out orders?
+
+```{r}
+
+```
+
+2. The `is.na()` function takes a vector as an argument and returns a logical vector that equals `TRUE` if the element is `NA`. 
+   Using this and the `!`, subset the reviews to only non-`NA` values. 
+   What is the average review? Comapre this to `mean(reviews, na.rm = TRUE)`.
+
+```{r}
+mean(reviews[!is.na(reviews)])
+mean(reviews, na.rm = TRUE)
+```
+
+
+
+### Vectorized operations
+
+Often times we want to use multiple vectors for some calculation.
+Like single numbers, arithmetic can be done element-by-element with vectors.
+This means +, -, *, / and ^ all work on a vector.
+
+```{r}
+x <- c(1, 2, 3)
+y <- c(5, 5, 5)
+
+x + y
+x^2
+```
+
+There are two main features to remember:
+1. The vectors you use should be of the same length (if they are not, some weird *recycling* rules occur that we will not discuss in this introduction). 
+2. Scalars are treated as a vector of the same length with that single number repeated for each element.
+
+```{r}
+## Equivalent:
+x + 2
+x + rep(2, 3)
+```
+
+More, many functions are designed to be used on vectors element by element.
+All of the functions we used in the "Calculator" section do this:
+```{r}
+exp(x)
+log(x)
+sqrt(x^2)
+```
+
+#### Exercise
+
+1. Try to guess the output of the following expression `2*x + y + 1`.
+
+
+### Sorting data
+
+The final vector operation we will discuss is how to sort data; either ascending or descending in value.
+There are two ways to do this. 
+
+First, we can use the `sort()` function.
+The function takes a function and an optional `decreasing` argument.
+`decreasing` takes a logical `TRUE`/`FALSE` option. 
+By default, it increases in values
+```{r}
+sort(rebounds, decreasing = TRUE)
+```
+
+Alternatively, we can use the `order()` function to get the *row indices* of the ordering:
+```{r}
+order(rebounds, decreasing = TRUE)
+```
+
+The first element of the resulting vector is the index of the maximum number (1530)
+```{r}
+order(rebounds, decreasing = TRUE)[1]
+which.max(rebounds)
+```
+
+What this means is that we can use the result of `order` to subset the vector to get the sorted vector:
+```{r}
+rebounds[order(rebounds, decreasing = TRUE)]
+```
+
+This might seem like a bit silly, but it will prove useful when we want to sort multiple vectors at the *same time* based on one of the vectors. 
+
+

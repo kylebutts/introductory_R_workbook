@@ -1,0 +1,149 @@
+# Plotting
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(palmerpenguins)
+data(penguins, package = "palmerpenguins")
+# 0.0022 lbs = 1 g
+penguins$body_mass_lb <- 0.00220462 * penguins$body_mass_g
+```
+
+## Histograms
+
+Common functions for graphing are `hist()` for plotting one variable and `plot()` for plotting two variables. 
+
+```{r}
+# Count
+hist(penguins$body_mass_lb)
+```
+
+You can add additional commands for better plots. Use `?hist` to see the list of options. 
+
+#### Exercise
+
+1. Type `?hist` into the console and find the following options:
+
+- Find the option that will give you probabilities (instead of counts)
+- the bar color
+- the x-axis label
+- the main title
+
+Change these to make a more professional histogram:
+```{r}
+## Modify this
+hist(penguins$body_mass_lb)
+```
+
+
+2. Compare this distributions of `bill_length_mm` for Adelie and Chinstrap penguins. 
+
+```{r}
+
+```
+
+
+## Scatter Plots
+
+While we haven't talked about this yet, it is typically of interest to compare multiple variables together. 
+To plot two variables, we will use the `plot()` function to make scatter plots.
+
+```{r}
+plot(penguins$flipper_length_mm, penguins$body_mass_lb, main = "Scatter plot of flipper length and body mass")
+```
+
+It can be kind of annoying to type `penguins$` twice in plot.
+There is a second way to call `plot` which uses **formula** syntax.
+A formula has the following syntax `yvar ~ xvar` where `yvar` and `xvar` are variable names.
+So we can use `body_mass_lb ~ flipper_length_mm` to specify variables and then tell `plot` to use the `penguins` data.frame using the `data` argument.
+```{r}
+plot(
+  body_mass_lb ~ flipper_length_mm, 
+  data = penguins, 
+  main = "Scatter plot of flipper length and body mass"
+)
+```
+
+If the `data` argument is not provided, it will look for `body_mass_lb` and `flipper_length_mm` as variables defined in the **global environment**. 
+If these variables are within a data.frame and not as their own variables, then you will get the "object not found" error again.
+
+The reason I am showing you this is that this syntax will show up again when we run linear regressions in this class.
+And, in fact, this form of function calling where we use a `data` argument and then reference variables *within* that data.frame by name is actually quite common (see `dplyr` section in advanced materials).
+
+
+
+
+## (optional) ggplot2
+
+There is a package called `ggplot2` that improves base Rs graphing library. 
+We will not cover the details here, but a curious student can find much more details here: https://ggplot2-book.org/
+
+This is a particularly nice introduction: https://uopsych-r-bootcamp-2020.netlify.app/post/06-ggplot2/
+
+```{r, warning = FALSE, message = FALSE}
+library(ggplot2)
+ggplot() +
+  geom_histogram(data = penguins, aes(x = body_mass_lb, color = species, fill = species), alpha = 0.3) +
+  labs(
+    title = "Histogram of Penguin Body Mass, by species",
+    x = "Weight (in lb.)",
+    color = "Species",
+    fill = "Species"
+  ) +
+  scale_color_grey() +
+  scale_fill_grey() +
+  theme_gray()
+```
+
+```{r, warning = FALSE, message = FALSE}
+ggplot() +
+  geom_point(data = penguins, aes(x = flipper_length_mm, y = body_mass_lb, color = species)) +
+  labs(
+    title = "Scatter Plot of Penguin Data, by species",
+    x = "Flipper Length (in mm)",
+    y = "Weight (in lb.)",
+    color = "Species",
+    fill = "Species"
+  ) +
+  scale_color_grey() +
+  theme_gray()
+```
+
+`ggplot2` makes it really easy to make beautiful and professional graphs and it would be a **really** useful skill to have in your career
+
+```{r}
+ggplot(
+  data = penguins,
+  aes(
+    x = bill_length_mm,
+    y = bill_depth_mm,
+    group = species
+  )
+) +
+  geom_point(
+    aes(color = species, shape = species),
+    size = 3,
+    alpha = 0.8
+  ) +
+  geom_smooth(method = "lm", se = FALSE, aes(color = species)) +
+  theme_minimal() +
+  scale_color_manual(values = c("darkorange", "purple", "cyan4")) +
+  labs(
+    title = "Penguin bill dimensions",
+    subtitle = "Bill length and depth for Adelie, Chinstrap and Gentoo Penguins at Palmer Station LTER",
+    x = "Bill length (mm)",
+    y = "Bill depth (mm)",
+    color = "Penguin species",
+    shape = "Penguin species"
+  ) +
+  theme(
+    legend.position = "inside",
+    legend.position.inside = c(0.85, 0.15),
+    legend.background = element_rect(fill = "white", color = NA),
+    plot.title.position = "plot",
+    plot.caption = element_text(hjust = 0, face = "italic"),
+    plot.caption.position = "plot"
+  )
+```
+

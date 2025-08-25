@@ -1,0 +1,16 @@
+# Preface {.unnumbered}
+
+This "workbook" serves as an opinionated introduction to R for data science workflows. 
+My goal is to introduce everything from first principles so that someone installing R for the first time can get up to speed.
+While not a complete tour of all that R is able to do, with the "Introduction" part of the book, you shuld be able to complete my class assignments.
+
+This book is intended to be used interactively! 
+There are many exercises scattered throughout. 
+Some are focused to help with comprehension, while others are meant to build your confidence in exploring data to answer questions.
+
+For those of you who would like to learn more, the Intermediate and Advanced guides will be contain extra information that continues to build up your programming skills. 
+These will take longer to complete, but will grow over time.
+
+With that, we can continue to our first topic: getting your computer ready for installing R and a code-editor to work in.
+
+
