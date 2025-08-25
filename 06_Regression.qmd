@@ -146,7 +146,7 @@ points(average_score_sat_reading_hat ~ average_score_sat_math, data = nyc, col =
 ```
 
 Another interesting property of regression is that $(\bar{X}, \bar{Y})$ will fall on the regression line.
-That is, the fitted value for a school with SAT math score of $\bar{X} = $ `r round(xbar, 1)` is $\bar{Y}$:
+That is, the fitted value for a school with SAT math score of $\bar{X}$ is $\bar{Y}$:
 ```{r}
 ybar == beta_0_hat + beta_1_hat * xbar
 ```
