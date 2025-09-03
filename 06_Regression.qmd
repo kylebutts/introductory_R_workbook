@@ -243,7 +243,7 @@ plot(yhat ~ average_score_sat_math, data = predict_df)
 ```
 
 
-### Regression with indicator varaibles
+### Regression with indicator variables
 
 ```{r}
 feols(average_score_sat_math ~ 0 + i(borough), data = nyc)
