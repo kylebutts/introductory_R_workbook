@@ -9,7 +9,7 @@ The first part of the assignment is aimed at getting your computers set up for t
 
 You will know that you have installed R and Positron correctly if when you start Positron, you see a message in the Console tab that says `R 4.5.1 started'.
 
-There are various parts of the Poistron app and it can be overwhelming at first! 
+There are various parts of the Positron app and it can be overwhelming at first! 
 Here's a breakdown from the Positron website:
 
 
